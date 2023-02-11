@@ -16,7 +16,7 @@ const AuthButtons = () => {
         mr="2"
         onClick={() => setAuthModalState({ open: true, view: "login" })}
       >
-        Login In
+        Log In
       </Button>
       <Button
         height="28px"
