@@ -1,6 +1,9 @@
 import { authModalState } from "@/atoms/authModalAtoms";
+import { auth } from "@/firebase/clientApp";
+import { FIREBASE_ERRORS } from "@/firebase/error";
 import { Button, Flex, Input, Text } from "@chakra-ui/react";
 import React, { useState } from "react";
+import { useSignInWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { useSetRecoilState } from "recoil";
 
 const Login = () => {
@@ -11,6 +14,9 @@ const Login = () => {
     password: "",
   });
 
+  const [signInWithEmailAndPassword, user, loading, error] =
+    useSignInWithEmailAndPassword(auth);
+
   const onChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     setLoginForm((prev) => ({
       ...prev,
@@ -19,7 +25,11 @@ const Login = () => {
   };
 
   // Firebase logic
-  const onSubmitHandler = () => {};
+  const onSubmitHandler = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    signInWithEmailAndPassword(loginForm.email, loginForm.password);
+  };
 
   return (
     <form onSubmit={onSubmitHandler}>
@@ -68,9 +78,26 @@ const Login = () => {
         }}
       />
 
+      <Text fontSize="10pt" textAlign="center" color="red">
+        {FIREBASE_ERRORS[error?.message as keyof typeof FIREBASE_ERRORS]}
+      </Text>
+
       <Button height="36px" width="100%" my="2" type="submit">
-        Login In
+        Log In
       </Button>
+      <Flex justifyContent="center" mb={2}>
+        <Text fontSize="9pt" mr={1}>
+          Forgot your password?
+        </Text>
+        <Text
+          fontSize="9pt"
+          color="blue.500"
+          cursor="pointer"
+          onClick={() => toggleView("resetPassword")}
+        >
+          Reset
+        </Text>
+      </Flex>
       <Flex fontSize="9pt" justifyContent="center">
         <Text mr="1">New here?</Text>
         <Text
